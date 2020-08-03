@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
-<title>homepage</title><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; }
+<title>搭建带独立DMA的SPI通信</title><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; }
 html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
 body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
 iframe { margin: auto; }
@@ -1837,6 +1837,6 @@ footer.ty-footer {
 </style>
 </head>
 <body class='typora-export os-windows' >
-<div  id='write'  class = ''><h1><a name="故里千寻" class="md-header-anchor"></a><span>故里千寻</span></h1><h2><a name="一文字回忆dreamoldrememberhtml" class="md-header-anchor"></a><span>一、</span><a href='dream/oldremember.html'><span>文字回忆</span></a></h2><h2><a name="二网站搭建" class="md-header-anchor"></a><span>二、网站搭建</span></h2><h2><a name="三经验总结experimentexperiencehtml" class="md-header-anchor"></a><span>三、</span><a href='experiment/experience.html'><span>经验总结</span></a></h2><h2><a name="四学习资料studyresstudyreshtml" class="md-header-anchor"></a><span>四、</span><a href='StudyRes/StudyRes.html'><span>学习资料</span></a></h2><h2><a name="五工作日志worklog工作日志html" class="md-header-anchor"></a><span>五、</span><a href='worklog/工作日志.html'><span>工作日志</span></a></h2><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
+<div  id='write'  class = ''><h1><a name="stm32h750环境下搭建带独立dma的spi通信" class="md-header-anchor"></a><span>STM32H750环境下，搭建带独立DMA的SPI通信</span></h1><h2><a name="一目标分析" class="md-header-anchor"></a><span>一、目标分析</span></h2><p><span>首先分析SPI和DMA有哪些特点，在什么情况下工作。</span></p><p><span>任务要求：实现5个独立SPI收发，每个SPI有独立的DMA。</span></p><h4><a name="spi" class="md-header-anchor"></a><span>SPI：</span></h4><p><span>SPI是串行外设接口（Serial Peripheral Interface）的缩写。关键词：</span><strong><span>全双工，同步通信</span></strong></p><p><span>引脚接口如下：（MOSI：master in slave out, SS:slave select[也称CS])</span></p><p><img src="Recourse\SPI物理连接.png" referrerpolicy="no-referrer" alt="引脚接口"></p><p><span>note：CS用作片选，因此，当只有一个从机时，可以不用这个引脚</span></p><p>&nbsp;</p></div>
 </body>
 </html>

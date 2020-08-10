@@ -2,6 +2,10 @@
 
 想让设备被识别成HID，就需要了解其中的交互方式和通信协议。HID是一种USB通信协议，无需安装驱动就能进行交互。
 
+[TOC]
+
+
+
 # 了解HID
 
 ## 导言-USB设备描述符
@@ -413,5 +417,43 @@ SET_PROTOCOL
 
 
 
+# STM32H750 Datasheet and Manual
 
+### 名词解释
 
+| 简写 |                     全称                      |
+| :--: | :-------------------------------------------: |
+|  FS  |                  Full speed                   |
+|  LS  |                   Low speed                   |
+|  HS  |                  High speed                   |
+| MAC  |            Media access controller            |
+| OTG  |                   On the go                   |
+| PFC  |            Packet FIFO controller             |
+| PHY  |                physical layer                 |
+| USB  |             Universal serial bus              |
+| UTMI | USB 2.0 Transceiver Macrocell interface(UTMI) |
+| ULPI |           UTMI + Low Pin Interface            |
+| LPM  |             Link power management             |
+| BCD  |           Battery charging detector           |
+| HNP  |           Host negotiation protocol           |
+| SPR  |           Session request protocol            |
+
+## 熟悉Manual
+
+先查看USB接口实现的功能，硬件如何支持软件定义。STM32H750芯片对USB的支持如下：
+
+![](Resource\OTGimplementation.png)
+
+两个USB的系统构图如下：
+
+![USB1](Resource\USB1.png)
+
+![USB2](Resource\USB2.png)
+
+可以看到，两个usb都支持FS通信，使用FS通信时，需要使用以下引脚：
+
+![](Resource\OTG_FS_Pins.png)
+
+如果需要使用HS模式时，只能使用USB1，且引脚配置如下：
+
+![](Resource\OTG_HS_Pins.png)

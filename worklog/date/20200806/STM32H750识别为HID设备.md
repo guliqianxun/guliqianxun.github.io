@@ -6,11 +6,66 @@
 
 
 
-# 了解HID
+# STM32H750 Datasheet and Manual
 
-## 导言-USB设备描述符
+## 名词解释
 
-当插入USB设备后，主机会向设备请求各种描述符来识别设备。那什么是设备描述符呢？
+| 简写 |                     全称                      |
+| :--: | :-------------------------------------------: |
+|  FS  |                  Full speed                   |
+|  LS  |                   Low speed                   |
+|  HS  |                  High speed                   |
+| MAC  |            Media access controller            |
+| OTG  |                   On the go                   |
+| PFC  |            Packet FIFO controller             |
+| PHY  |                physical layer                 |
+| USB  |             Universal serial bus              |
+| UTMI | USB 2.0 Transceiver Macrocell interface(UTMI) |
+| ULPI |           UTMI + Low Pin Interface            |
+| LPM  |             Link power management             |
+| BCD  |           Battery charging detector           |
+| HNP  |           Host negotiation protocol           |
+| SPR  |           Session request protocol            |
+
+## 熟悉Manual
+
+先查看USB接口实现的功能，硬件如何支持软件定义。STM32H750芯片对USB的支持如下：
+
+![](Resource\OTGimplementation.png)
+
+两个USB的系统构图如下：
+
+![USB1](Resource\USB1.png)
+
+![USB2](Resource\USB2.png)
+
+可以看到，两个usb都支持FS通信，使用FS通信时，需要使用以下引脚：
+
+![](Resource\OTG_FS_Pins.png)
+
+如果需要使用HS模式时，只能使用USB1，且引脚配置如下：
+
+![](Resource\OTG_HS_Pins.png)
+
+因为只提供DP和DM这两个引脚，所以本次使用FS进行USB通信。
+
+
+
+## Datasheet查看电气特性
+
+![](Resource\OTG_FS_characteristics.png)
+
+![](Resource\OTG_HS_characteristics.png)
+
+# USB协议-HID
+
+## 导言：USB设备描述符
+
+当插入USB设备后，主机会向设备请求各种描述符来识别设备。其中的大体过程为：
+
+![](Resource\USB识别过程.jpg)
+
+
 
 Descriptor即描述符，是一个完整的数据结构，可以通过C语言等编程实现，并存储在USB设备中，用于描述一个USB设备的所有属性，USB主机是通过一系列命令来要求设备发送这些信息的。
 
@@ -18,11 +73,15 @@ Descriptor即描述符，是一个完整的数据结构，可以通过C语言等
 
 USB有5种标准描述符：
 
-- 设备描述符
-- 配置描述符
-- 字符描述符
-- 接口描述符
-- 端点描述符
+>设备描述符
+>配置描述符
+>字符描述符
+>接口描述符
+>端点描述符
+
+为了把一个设备识别为HID类别，设备在定义描述符的时候必须遵守HID规范
+
+  ![](Resource\接口描述符.jpg)
 
 描述符之间有一定的关系，一个设备只有一个设备描述符，而一个设备描述符可以包含多个配置描述符，而一个配置描述符可以包含多个接口描述符，一个接口使用了几个端点，就有几个端点描述符。
 
@@ -30,11 +89,15 @@ USB有5种标准描述符：
 
 在获取描述符时，先获取设备描述符，然后再获取配置描述符，根据配置描述符中的配置集合长度，一次将配置描述符、接口描述符、端点描述符一起一次读回。其中可能还会有获取设备序列号，厂商字符串，产品字符串等。
 
+## 描述符：
+
+### Device Descriptor
+
 ```c
 /*设备描述符*/
 struct _DEVICE_DEscriptOR_STRUCT
 {
-  BYTE   bLength;    //设备描述符的字节数大小
+  BYTE   bLength;    //设备描述符的字节数大小,一般为0x12
   BYTE   bDescriptorType;   //描述符类型编号，为0x01
   WORD  bcdUSB;   //USB版本号
   BYTE  bDeviceClass;   //USB分配的设备类代码，0x01~0xfe为标准设备类，0xff为厂商自定义类型，0x00不是在设备描述符中定义的，如HID
@@ -50,6 +113,17 @@ struct _DEVICE_DEscriptOR_STRUCT
   BYTE   bNumConfiguration;   //可能的配置数量
 }
 ```
+
+*bcdUSB :* USB 规范发布号．表示了本设备能适用于那种协议，如2.0=0200，1.1=0110等．
+*bDeviceClass :* 类型代码（由USB指定）。当它的值是0时，表示所有接口在配置描述符里，并且所有接口是独立的。当它的值是1到FEH时，表示不同的接口关联的。当它的值是FFH时，它是厂商自己定义的．
+*bDeviceSubClass :* 子类型代码（由USB分配）．如果bDeviceClass值是0，一定要设置为0．其它情况就跟据USB-IF组织定义的编码．
+*bDeviceProtocol :* 协议代码（由USB分配）．如果使用USB-IF组织定义的协议，就需要设置这里的值，否则直接设置为0。如果厂商自己定义的可以设置为FFH．
+
+设备描述符中：**bDeviceClass, bDeviceSubClass, bDeviceProtocol三个值必须为0**
+
+### Configuration Descriptor
+
+![](Resource\配置描述符.jpg)
 
 ```c
 /*配置描述符*/
@@ -67,6 +141,10 @@ struct _CONFIGURATION_DEscriptOR_STRUCT
 }
 ```
 
+### String Descriptor
+
+![](Resource\字符串描述符.jpg)
+
 ```c
 /*字符描述符*/
 struct _STRING_DEscriptOR_STRUCT
@@ -77,6 +155,10 @@ struct _STRING_DEscriptOR_STRUCT
     BYTE SomeDescriptor[36]; //UNICODE编码的字符串
 }
 ```
+
+### Interface Descriptor
+
+![](Resource\接口描述符real.jpg)
 
 ```c
 /*接口描述符*/
@@ -105,6 +187,12 @@ struct _INTERFACE_DEscriptOR_STRUCT
 }
 ```
 
+**接口描述符中bInterfaceClass的值必须为0x03，bInterfaceSubClass的值为0或1**，为1表示HID设备符是一个启动设备（Boot Device，一般对PC机而言才有意义，意思是BIOS启动时能识别并使用您的HID设备，且只有标准鼠标或键盘类设备才能成为Boot Device。如果为0则只有在操作系统启动后才能识别并使用您的HID设备）。
+
+### Endpoint Descriptor
+
+![](Resource\端点描述符.jpg)
+
 ```c
 /*端点描述符*/
 struct _ENDPOIN_DEscriptOR_STRUCT
@@ -126,18 +214,7 @@ struct _ENDPOIN_DEscriptOR_STRUCT
 }
 ```
 
-### HID设备描述符
 
-当插入USB设备后，主机会向设备请求各种描述符来识别设备。
-为了把一个设备识别为HID类别，设备在定义描述符的时候必须遵守HID规范
-
-![](Resource\接口描述符.jpg)
-
-从框图中，可以看出除了USB标准定义的一些描述符外，HID设备还必须定义HID描述符。另外设备和主机的通信是通过报告的形式来实现的，所以还必须定义报告描述符；而物理描述符不是必需的。还有就是HID描述符是关联于接口（而不是端点）的，所以设备不需要为每个端点都提供一个HID描述符。
-
-- 设备描述符中：**bDeviceClass, bDeviceSubClass, bDeviceProtocol三个值必须为0**
-
-- **接口描述符中bInterfaceClass的值必须为0x03，bInterfaceSubClass的值为0或1**，为1表示HID设备符是一个启动设备（Boot Device，一般对PC机而言才有意义，意思是BIOS启动时能识别并使用您的HID设备，且只有标准鼠标或键盘类设备才能成为Boot Device。如果为0则只有在操作系统启动后才能识别并使用您的HID设备）。
 
 - **USB HID类描述符的结构**
 
@@ -415,45 +492,66 @@ SET_PROTOCOL
 - Get_Protocol——主机获得设备的当前活动是引导协议还是报告协议；
 - Set_Protocol——在引导协议和报告协议间切换，设备如果支持系统引导（如键盘和鼠标），就必须支持Get_Protocol和Set_Protocol请求。
 
+# 链接：
+
+一般的排列方式是：红白绿黑从左到右
+>红色－USB电源 标有－VCC、Power、5V、5VSB字样
+>绿色－USB数据线（正）－DATA+、USBD+、PD+、USBDT+
+>白色－USB数据线（负）－DATA-、USBD-、PD-、USBDT+
+>黑色－地线 
+>－GND、Ground
+
+\----------------------------------------------------
+红、白、绿、黑，分别是Vcc/Data-/Data+/Gnd
+VCC是电源接入、GND为接地，DP、DM是差分信号；PORT-、PORT+是数据负、正信号。 
+USB里面的DP等同PORT+；DM就等同PORT-
+
+# 软件框架
+
+使用 STM32CubeMX 和 keil5 作为软件开发环境，STM32CubeProgrammer 烧写程序， 调试工具： Bus hound
+
+## STM32CubeMX ：
+
+建立工程选择对应芯片，选择外部陶瓷晶振，默认25M
+
+![](Resource\MX选择外部晶振.png)
+
+然后打开USB功能，选择引脚为HS引脚，但使用FS模式
+
+![](Resource\MX打开USBHS.png)
+
+在Middleware中选择设置USB设备
+
+![](Resource\MX选择HS为HID类.png)
+
+设置USB设备描述符
+
+![](Resource\MX设置设备描述符.png)
+
+生产的芯片引脚赋用如下
+
+![](Resource\芯片引脚选用.png)
+
+芯片时钟，主频为480M，USB使用最高时钟48M
+
+![](Resource\USB时钟.png)
+
+之后设置工程属性，导出代码，就可以在keil5中编辑了
 
 
-# STM32H750 Datasheet and Manual
 
-### 名词解释
+## Keil5
 
-| 简写 |                     全称                      |
-| :--: | :-------------------------------------------: |
-|  FS  |                  Full speed                   |
-|  LS  |                   Low speed                   |
-|  HS  |                  High speed                   |
-| MAC  |            Media access controller            |
-| OTG  |                   On the go                   |
-| PFC  |            Packet FIFO controller             |
-| PHY  |                physical layer                 |
-| USB  |             Universal serial bus              |
-| UTMI | USB 2.0 Transceiver Macrocell interface(UTMI) |
-| ULPI |           UTMI + Low Pin Interface            |
-| LPM  |             Link power management             |
-| BCD  |           Battery charging detector           |
-| HNP  |           Host negotiation protocol           |
-| SPR  |           Session request protocol            |
+打开工程后，产生的代码构架如下：
 
-## 熟悉Manual
+![](Resource\cubeMX生成的软件框图.png)
 
-先查看USB接口实现的功能，硬件如何支持软件定义。STM32H750芯片对USB的支持如下：
+使能一个HID设备的思路如下
 
-![](Resource\OTGimplementation.png)
+![](Resource\usbHID实现步骤.png)
 
-两个USB的系统构图如下：
+![](Resource\文件框架.png)
 
-![USB1](Resource\USB1.png)
+# 参考目录：
 
-![USB2](Resource\USB2.png)
-
-可以看到，两个usb都支持FS通信，使用FS通信时，需要使用以下引脚：
-
-![](Resource\OTG_FS_Pins.png)
-
-如果需要使用HS模式时，只能使用USB1，且引脚配置如下：
-
-![](Resource\OTG_HS_Pins.png)
+[STM32 USB初级培训.USB IP介绍](https://www.stmcu.com.cn/Designresource/design_resource_detail/file/561104/lang/ZH/token/5a1440f4a26de5d194fc3adb721387fd)

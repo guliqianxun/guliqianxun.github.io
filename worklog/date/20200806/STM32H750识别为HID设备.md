@@ -492,11 +492,66 @@ SET_PROTOCOL
 - Get_Protocol——主机获得设备的当前活动是引导协议还是报告协议；
 - Set_Protocol——在引导协议和报告协议间切换，设备如果支持系统引导（如键盘和鼠标），就必须支持Get_Protocol和Set_Protocol请求。
 
+# 链接：
 
+一般的排列方式是：红白绿黑从左到右
+>红色－USB电源 标有－VCC、Power、5V、5VSB字样
+>绿色－USB数据线（正）－DATA+、USBD+、PD+、USBDT+
+>白色－USB数据线（负）－DATA-、USBD-、PD-、USBDT+
+>黑色－地线 
+>－GND、Ground
+
+\----------------------------------------------------
+红、白、绿、黑，分别是Vcc/Data-/Data+/Gnd
+VCC是电源接入、GND为接地，DP、DM是差分信号；PORT-、PORT+是数据负、正信号。 
+USB里面的DP等同PORT+；DM就等同PORT-
 
 # 软件框架
 
+使用 STM32CubeMX 和 keil5 作为软件开发环境，STM32CubeProgrammer 烧写程序， 调试工具： Bus hound
+
+## STM32CubeMX ：
+
+建立工程选择对应芯片，选择外部陶瓷晶振，默认25M
+
+![](Resource\MX选择外部晶振.png)
+
+然后打开USB功能，选择引脚为HS引脚，但使用FS模式
+
+![](Resource\MX打开USBHS.png)
+
+在Middleware中选择设置USB设备
+
+![](Resource\MX选择HS为HID类.png)
+
+设置USB设备描述符
+
+![](Resource\MX设置设备描述符.png)
+
+生产的芯片引脚赋用如下
+
+![](Resource\芯片引脚选用.png)
+
+芯片时钟，主频为480M，USB使用最高时钟48M
+
+![](Resource\USB时钟.png)
+
+之后设置工程属性，导出代码，就可以在keil5中编辑了
 
 
 
+## Keil5
 
+打开工程后，产生的代码构架如下：
+
+![](Resource\cubeMX生成的软件框图.png)
+
+使能一个HID设备的思路如下
+
+![](Resource\usbHID实现步骤.png)
+
+![](Resource\文件框架.png)
+
+# 参考目录：
+
+[STM32 USB初级培训.USB IP介绍](https://www.stmcu.com.cn/Designresource/design_resource_detail/file/561104/lang/ZH/token/5a1440f4a26de5d194fc3adb721387fd)

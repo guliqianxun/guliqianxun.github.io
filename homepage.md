@@ -10,6 +10,8 @@
 
 ## 五、[工作日志](worklog/工作日志.html)
 
+## 六、[文档翻译](translate/Translation.html)
+
 
 
 

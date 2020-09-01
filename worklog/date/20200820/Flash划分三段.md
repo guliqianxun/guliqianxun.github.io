@@ -93,6 +93,73 @@ LR_IROM1 0x08000000 0x00020000  {    ; load region size_region
 >
 2. 逐步拷贝到SRAM中
 
+   ```c
+   /**
+     * @brief copy flash to sram 20kb.
+     */
+   static int FlashCopy(void){
+   	uint32_t FlashAddr, SRAMAddr;
+   	FlashAddr = FLASH_BANK1_BASE;
+   	SRAMAddr = D1_ITCMRAM_BASE;
+   	memcpy((void *)SRAMAddr, (void *)FlashAddr, 20*1024);
+   	Message("Copy Finished");
+   	return OK;
+   }
+   ```
+
+   之后读取出来比对，看是否成功拷贝
+
+   ```c
+   /**
+     * @brief read flash first 25word, transmit use uart.
+     */
+   static int ReadFlash(void){
+   	int i,j;
+   	uint8_t p[100];
+   	uint32_t FlashAddr, SRAMAddr;
+   	FlashAddr = FLASH_BANK1_BASE;
+   	for(i=0;i<25;i++)
+   	{
+   		j = i*4;
+   		p[j] = *(__IO uint32_t *)FlashAddr >> 24;
+   		p[j+1] = *(__IO uint32_t *)FlashAddr >> 16;
+   		p[j+2] = *(__IO uint32_t *)FlashAddr >> 8;
+   		p[j+3] = *(__IO uint32_t *)FlashAddr;
+   		FlashAddr+=4;
+   	}
+   	HAL_UART_Transmit(&huart7, (uint8_t*)p, (uint16_t)100, 100);
+   	HAL_Delay(1000);
+   	Message("Read Finished");
+   	return OK;
+   }
+   
+   /**
+     * @brief read ITCM first 25word, transmit use uart.
+     */
+   static int ReadITCM(void){
+   	int i,j;
+   	uint8_t p[100];
+   	uint32_t SRAMAddr;
+   	SRAMAddr = D1_ITCMRAM_BASE;
+   	for(i=0;i<25;i++)
+   	{
+   		j = i*4;
+   		p[j] = *(__IO uint32_t *)SRAMAddr >> 24;
+   		p[j+1] = *(__IO uint32_t *)SRAMAddr >> 16;
+   		p[j+2] = *(__IO uint32_t *)SRAMAddr >> 8;
+   		p[j+3] = *(__IO uint32_t *)SRAMAddr;
+   		SRAMAddr+=4;
+   	}
+   	HAL_UART_Transmit(&huart7, (uint8_t*)p, (uint16_t)100, 100);
+   	HAL_Delay(1000);
+   
+   	Message("Read ITCM");
+   	return OK;
+   }
+   ```
+
+   读出来结果是一样的，程序拷贝成功。
+
 ### 第二步：程序跳转
 
 #### 1. SP指针跳转

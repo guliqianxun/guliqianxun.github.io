@@ -1,5 +1,9 @@
 # Flash划分三段
 
+[TOC]
+
+
+
 # 查看芯片资源
 
 ![](Resource\embaddedFlashMenory.png)
@@ -84,6 +88,10 @@ LR_IROM1 0x08000000 0x00020000  {    ; load region size_region
 
 
 ## 移植
+
+HAL操作FLASH流程
+
+![](Resource\FLASH操作.png)
 
 ### 第一步：flash拷贝
 
@@ -278,7 +286,7 @@ void run_app(uint32_t app_addr)
 
 
 
-![](Resource\FLASH操作.png)
+
 
 
 
@@ -298,6 +306,51 @@ register uint32_t __regPC     __ASM("pc");
 ```
 
 哦吼，这就搞不懂了，为啥pc指针也指向SRAM呢
+
+![](Resource\PCRegisterError.png)
+
+使用STLink调试可以看到，这里的PC指针赋值语句是错误的，r15这个寄存器里的值没有被传出去，regPC获取的值是r0的值，所以才一直不对。
+
+![](Resource\MRS指令1.png)
+
+![](Resource\MRS指令2.png)
+
+通过参考内核文档可以看到，MSR指令并没有提供对PC指针的命令，所以确实是命令写错了。
+
+**在起始文件中添加汇编函数如下：**
+
+```
+; Get_PC
+Get_PC			PROC
+				EXPORT Get_PC
+				MOV		R0, LR
+				BX 		LR
+				ENDP
+```
+
+>link register (R14), used to store a value (the Return Link) relating to the return address from a subroutine that is entered using a Branch with Link instruction. This register is set to an illegal value (all 1’s) on reset. The reset value will cause a fault condition to occur if a subroutine return is attempted using it.
+
+这里用LR去返回PC指针，因为调用了Get_PC()这个函数，PC指针指向这个函数首地址，而这个函数返回一个值，LR指向这个值，也反映了PC所在的位置。
+
+```c
+uint32_t Get_PC(void);
+```
+
+然后在使用前声明一下，这样就可以愉快的使用啦。
+
+![](Resource\返回LR.png)
+
+## 程序跳转不成功
+
+在成功判断PC指针之后， 设置好正确的 PC 和 SP 指针， 发现并不能按照预想的一样直接跳转过去。
+
+### 第一个坑：指针
+
+跳转程序是取的reset_hander， 这个指针指向程序重启的首地址，但是因为copy flash的原因，这里面存的实际上是flash程序的地址（08开头）这意味这就算PC指针在跳过去的下一刻就又跳回来了。再者，如果把这个地址存的地址减去08000000，按理来说应该就是对应的实际地址了，但是，这个程序结束之后的下一个跳转呢？是不是每一步跳转都需要更改。
+
+
+
+
 
 
 

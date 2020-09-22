@@ -8,9 +8,7 @@
 
 ## 四、[学习资料](StudyRes/StudyRes.html)
 
-## 五、[工作日志](worklog/工作日志.html)
-
-## 六、[文档翻译](translate/Translation.html)
+## 五、[文档翻译](translate/Translation.html)
 
 
 

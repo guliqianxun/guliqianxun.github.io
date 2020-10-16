@@ -16,6 +16,7 @@ a:active, a:hover { outline: 0px; }
 .for-image #write { padding-left: 8px; padding-right: 8px; }
 body.typora-export { padding-left: 30px; padding-right: 30px; }
 .typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
 @media screen and (max-width: 500px) {
   body.typora-export { padding-left: 0px; padding-right: 0px; }
   #write { padding-left: 20px; padding-right: 20px; }
@@ -86,7 +87,7 @@ blockquote > :first-child, li > :first-child { margin-top: 0px; }
   #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
   .typora-export * { -webkit-print-color-adjust: exact; }
   html.blink-to-pdf { font-size: 13px; }
-  .typora-export #write { padding-left: 32px; padding-right: 32px; padding-bottom: 0px; break-after: avoid; }
+  .typora-export #write { break-after: avoid; }
   .typora-export #write::after { height: 0px; }
   .is-mac table { break-inside: avoid; }
 }
@@ -153,6 +154,9 @@ svg[id^="mermaidChart"] { line-height: 1em; }
 mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
 .md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
 mark .md-meta { color: rgb(0, 0, 0); opacity: 0.3 !important; }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
 
 
 /* Flowchart variables */
@@ -1833,10 +1837,16 @@ footer.ty-footer {
     color: white;
 }
 
+.export-detail,
+.export-item.active,
+.export-items-list-control {
+    background: #d6d6d4
+}
+
 
 </style>
 </head>
-<body class='typora-export os-windows' >
-<div  id='write'  class = ''><h1><a name="故里千寻" class="md-header-anchor"></a><span>故里千寻</span></h1><h2><a name="一文字回忆dreamoldrememberhtml" class="md-header-anchor"></a><span>一、</span><a href='dream/oldremember.html'><span>文字回忆</span></a></h2><h2><a name="二网站搭建" class="md-header-anchor"></a><span>二、网站搭建</span></h2><h2><a name="三经验总结experimentexperiencehtml" class="md-header-anchor"></a><span>三、</span><a href='experiment/experience.html'><span>经验总结</span></a></h2><h2><a name="四学习资料studyresstudyreshtml" class="md-header-anchor"></a><span>四、</span><a href='StudyRes/StudyRes.html'><span>学习资料</span></a></h2><h2><a name="五文档翻译translatetranslationhtml" class="md-header-anchor"></a><span>五、</span><a href='translate/Translation.html'><span>文档翻译</span></a></h2><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
+<body class='typora-export os-windows'>
+<div id='write'  class=''><h1><a name="故里千寻" class="md-header-anchor"></a><span>故里千寻</span></h1><h2><a name="一文字回忆dreamoldrememberhtml" class="md-header-anchor"></a><span>一、</span><a href='dream/oldremember.html'><span>文字回忆</span></a></h2><h2><a name="二经验总结experimentexperiencehtml" class="md-header-anchor"></a><span>二、</span><a href='experiment/experience.html'><span>经验总结</span></a></h2><h2><a name="三学习资料studyresstudyreshtml" class="md-header-anchor"></a><span>三、</span><a href='StudyRes/StudyRes.html'><span>学习资料</span></a></h2><h2><a name="四文档翻译translatetranslationhtml" class="md-header-anchor"></a><span>四、</span><a href='translate/Translation.html'><span>文档翻译</span></a></h2><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
 </body>
 </html>

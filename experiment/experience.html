@@ -16,6 +16,7 @@ a:active, a:hover { outline: 0px; }
 .for-image #write { padding-left: 8px; padding-right: 8px; }
 body.typora-export { padding-left: 30px; padding-right: 30px; }
 .typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
 @media screen and (max-width: 500px) {
   body.typora-export { padding-left: 0px; padding-right: 0px; }
   #write { padding-left: 20px; padding-right: 20px; }
@@ -86,7 +87,7 @@ blockquote > :first-child, li > :first-child { margin-top: 0px; }
   #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
   .typora-export * { -webkit-print-color-adjust: exact; }
   html.blink-to-pdf { font-size: 13px; }
-  .typora-export #write { padding-left: 32px; padding-right: 32px; padding-bottom: 0px; break-after: avoid; }
+  .typora-export #write { break-after: avoid; }
   .typora-export #write::after { height: 0px; }
   .is-mac table { break-inside: avoid; }
 }
@@ -153,6 +154,9 @@ svg[id^="mermaidChart"] { line-height: 1em; }
 mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
 .md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
 mark .md-meta { color: rgb(0, 0, 0); opacity: 0.3 !important; }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
 
 
 /* Flowchart variables */
@@ -1833,10 +1837,16 @@ footer.ty-footer {
     color: white;
 }
 
+.export-detail,
+.export-item.active,
+.export-items-list-control {
+    background: #d6d6d4
+}
+
 
 </style>
 </head>
-<body class='typora-export os-windows' >
-<div  id='write'  class = ''><ol start='' ><li><a href='linux/linux连接蓝牙键盘.html'><span>linux连接蓝牙键盘</span></a></li><li><a href='connect/通信详谈.html'><span>通信详谈</span></a></li><li><a href='git/git commit 规范.html'><span>git使用</span></a></li><li><a href='Python/Pip 使用.html'><span>Python</span></a></li><li><a href='jupyter\jupyter.html'><span>Jupyter</span></a></li><li><a href='\mircoChip\小小的坑.html'><span>嵌入式开发的小坑</span></a></li></ol><p><a href='../index.html'><span>返回主页</span></a></p><p>&nbsp;</p></div>
+<body class='typora-export os-windows'>
+<div id='write'  class=''><ol start='' ><li><a href='linux/linux连接蓝牙键盘.html'><span>linux连接蓝牙键盘</span></a></li><li><a href='Python/Pip 使用.html'><span>Python</span></a></li><li><a href='jupyter\jupyter.html'><span>Jupyter</span></a></li><li><a href='mircoChip\小小的坑.html'><span>嵌入式开发的小坑</span></a></li></ol><p><a href='../index.html'><span>返回主页</span></a></p><p>&nbsp;</p></div>
 </body>
 </html>

@@ -70,3 +70,9 @@ feat(Controller):用户查询接口开发
 - 便于程序员对提交历史进行追溯，了解发生了什么情况。
 - 一旦约束了commit message，意味着我们将慎重的进行每一次提交，不能再一股脑的把各种各样的改动都放在一个git commit里面，这样一来整个代码改动的历史也将更加清晰。
 - 格式化的commit message才可以用于自动化输出Change log。
+
+# git回退
+
+git log查看提交
+
+git reset --hard +版本号回退
